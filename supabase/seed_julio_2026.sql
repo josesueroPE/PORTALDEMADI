@@ -108,7 +108,7 @@ insert into minutos_periodo (interprete_id, periodo, plataforma, minutos, tarifa
 ((select id from interpretes where nombre = 'Jeyce Ines Fredericks'), '2026-07-01', 'Propio', 2973, 0.1),
 ((select id from interpretes where nombre = 'Arfaxad Requejo'), '2026-07-01', 'LB', 5423, 0.1),
 ((select id from interpretes where nombre = 'cassandra de los cobos'), '2026-07-01', 'LB', 4139, 0.1),
-((select id from interpretes where nombre = 'Jose Mauricio Rubio Arabelo'), '2026-07-01', 'MAVEN', 26, 0.1),
+((select id from interpretes where nombre = 'Jose Mauricio Rubio Arabelo'), '2026-07-01', 'Maven', 26, 0.1),
 ((select id from interpretes where nombre = 'Jose Mauricio Rubio Arabelo'), '2026-07-01', 'TTG', 124, 0.1),
 ((select id from interpretes where nombre = 'Jose Mauricio Rubio Arabelo'), '2026-07-01', 'Propio', 1446, 0.1),
 ((select id from interpretes where nombre = 'Daniel Josue Montiel Matos'), '2026-07-01', 'LB', 6807, 0.1),

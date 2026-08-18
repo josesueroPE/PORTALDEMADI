@@ -65,15 +65,6 @@ export default async function PortalPage() {
   const yaGenerado = (historial ?? []).some((h) => h.periodo === periodo);
   const reciboDelPeriodo = (historial ?? []).find((h) => h.periodo === periodo);
 
-  let lineasRecibo: { plataforma: string; minutos: number; tarifa: number; subtotal: number }[] = [];
-  if (reciboDelPeriodo) {
-    const { data } = await supabase
-      .from("recibo_lineas")
-      .select("plataforma, minutos, tarifa, subtotal")
-      .eq("recibo_id", reciboDelPeriodo.id);
-    lineasRecibo = data ?? [];
-  }
-
   return (
     <PortalClient
       interprete={interprete}
@@ -81,15 +72,7 @@ export default async function PortalPage() {
       lineas={(minutos ?? []).map((l) => ({ ...l, tarifa: Number(l.tarifa) }))}
       historial={(historial ?? []).map((h) => ({ ...h, total: Number(h.total) }))}
       yaGenerado={yaGenerado}
-      reciboGenerado={
-        reciboDelPeriodo
-          ? {
-              numero: reciboDelPeriodo.numero,
-              total: Number(reciboDelPeriodo.total),
-              lineas: lineasRecibo.map((l) => ({ ...l, tarifa: Number(l.tarifa), subtotal: Number(l.subtotal) })),
-            }
-          : null
-      }
+      reciboIdDelPeriodo={reciboDelPeriodo?.id ?? null}
     />
   );
 }

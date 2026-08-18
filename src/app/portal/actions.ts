@@ -27,15 +27,15 @@ export async function generarRecibo(periodo: string) {
   if (interpreteError || !interprete) throw new Error("No se encontró tu file de intérprete");
   if (!interprete.genera_recibo_propio) throw new Error("Este recibo se genera en SUNAT, no aquí");
 
-  const { count: yaExiste } = await supabase
+  const { data: existente } = await supabase
     .from("recibos")
-    .select("id", { count: "exact", head: true })
+    .select("id")
     .eq("interprete_id", interprete.id)
-    .eq("periodo", periodo);
+    .eq("periodo", periodo)
+    .maybeSingle();
 
-  if (yaExiste && yaExiste > 0) {
-    revalidatePath("/portal");
-    return;
+  if (existente) {
+    return existente.id as string;
   }
 
   const { data: minutos, error: minutosError } = await supabase
@@ -75,4 +75,5 @@ export async function generarRecibo(periodo: string) {
   await supabase.from("interpretes").update({ ultimo_recibo: numero }).eq("id", interprete.id);
 
   revalidatePath("/portal");
+  return recibo.id as string;
 }

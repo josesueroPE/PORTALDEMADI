@@ -1,16 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { generarRecibo, logout } from "./actions";
-import { PLAT_LABEL, periodoLabel, money, numeroALetras } from "@/lib/recibo-utils";
+import { PLAT_LABEL, periodoLabel, money } from "@/lib/recibo-utils";
 
 type Linea = { plataforma: string; minutos: number; tarifa: number };
 type ReciboHist = { id: string; numero: number; periodo: string; total: number; fecha: string };
-type ReciboGenerado = {
-  numero: number;
-  total: number;
-  lineas: { plataforma: string; minutos: number; tarifa: number; subtotal: number }[];
-};
 
 export default function PortalClient({
   interprete,
@@ -18,16 +14,16 @@ export default function PortalClient({
   lineas,
   historial,
   yaGenerado,
-  reciboGenerado,
+  reciboIdDelPeriodo,
 }: {
   interprete: { id: string; nombre: string; pais: string | null; genera_recibo_propio: boolean; ultimo_recibo: number };
   periodo: string | null;
   lineas: Linea[];
   historial: ReciboHist[];
   yaGenerado: boolean;
-  reciboGenerado: ReciboGenerado | null;
+  reciboIdDelPeriodo: string | null;
 }) {
-  const [showRecibo, setShowRecibo] = useState(false);
+  const router = useRouter();
   const [pending, startTransition] = useTransition();
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
@@ -38,8 +34,8 @@ export default function PortalClient({
     setErrorMsg(null);
     startTransition(async () => {
       try {
-        await generarRecibo(periodo);
-        setShowRecibo(true);
+        const id = await generarRecibo(periodo);
+        router.push(`/portal/recibo/${id}`);
       } catch (e) {
         setErrorMsg(e instanceof Error ? e.message : "Error al generar el recibo");
       }
@@ -105,17 +101,23 @@ export default function PortalClient({
               {interprete.genera_recibo_propio && (
                 <>
                   {errorMsg && <p className="mt-3 text-[13px] text-danger">{errorMsg}</p>}
-                  <button
-                    onClick={yaGenerado ? () => setShowRecibo(true) : onGenerar}
-                    disabled={pending}
-                    className="mt-4 w-full rounded-lg bg-accent py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-50"
-                  >
-                    {pending
-                      ? "Generando…"
-                      : yaGenerado
-                      ? `Ver recibo N° ${reciboGenerado?.numero}`
-                      : `Generar mi recibo N° ${interprete.ultimo_recibo + 1}`}
-                  </button>
+                  {yaGenerado && reciboIdDelPeriodo ? (
+                    <a
+                      href={`/portal/recibo/${reciboIdDelPeriodo}`}
+                      target="_blank"
+                      className="mt-4 block w-full rounded-lg bg-accent py-3 text-center text-sm font-semibold text-white"
+                    >
+                      Ver / descargar recibo
+                    </a>
+                  ) : (
+                    <button
+                      onClick={onGenerar}
+                      disabled={pending}
+                      className="mt-4 w-full rounded-lg bg-accent py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-50"
+                    >
+                      {pending ? "Generando…" : `Generar mi recibo N° ${interprete.ultimo_recibo + 1}`}
+                    </button>
+                  )}
                 </>
               )}
 
@@ -123,9 +125,11 @@ export default function PortalClient({
               <div className="flex flex-col gap-2">
                 {historial.length === 0 && <p className="text-[13px] text-ink-faint">Todavía no tienes recibos.</p>}
                 {historial.map((h) => (
-                  <div
+                  <a
                     key={h.id}
-                    className="flex items-center justify-between rounded-lg border border-border bg-surface px-3.5 py-3"
+                    href={`/portal/recibo/${h.id}`}
+                    target="_blank"
+                    className="flex items-center justify-between rounded-lg border border-border bg-surface px-3.5 py-3 hover:bg-surface-2"
                   >
                     <div>
                       <p className="text-[13px] font-semibold text-ink">
@@ -134,54 +138,13 @@ export default function PortalClient({
                       <p className="font-mono text-[11.5px] text-ink-faint">{h.fecha}</p>
                     </div>
                     <p className="font-mono text-[13.5px] font-bold text-ink">{money(h.total)}</p>
-                  </div>
+                  </a>
                 ))}
               </div>
             </>
           )}
         </div>
       </div>
-
-      {showRecibo && reciboGenerado && periodo && (
-        <div
-          onClick={() => setShowRecibo(false)}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-5"
-        >
-          <div
-            onClick={(e) => e.stopPropagation()}
-            className="max-h-[88vh] w-full max-w-md overflow-y-auto rounded-xl bg-surface p-7"
-          >
-            <h3 className="font-serif text-lg font-bold text-ink">Recibo N° {reciboGenerado.numero}</h3>
-            <p className="mb-4 text-[12.5px] text-ink-soft">
-              {interprete.nombre} · {periodoLabel(periodo)}
-            </p>
-            <p className="text-[13px] text-ink">
-              He recibido de: <strong>MADI CONSULTING LS S.A.C.</strong> — RUC 20611577126
-            </p>
-            {reciboGenerado.lineas.map((l, i) => (
-              <p key={i} className="my-1 text-[13px] text-ink">
-                {PLAT_LABEL[l.plataforma] ?? l.plataforma}: {l.minutos} min × ${l.tarifa.toFixed(2)} = {money(l.subtotal)}
-              </p>
-            ))}
-            <p className="mt-3 text-[17px] font-bold text-ink">TOTAL: {money(reciboGenerado.total)}</p>
-            <p className="mb-5 text-[12.5px] italic text-ink-soft">{numeroALetras(reciboGenerado.total)}.</p>
-            <div className="flex justify-end gap-2">
-              <button
-                onClick={() => setShowRecibo(false)}
-                className="rounded-lg border border-border bg-surface px-3.5 py-2 text-xs font-medium text-ink"
-              >
-                Cerrar
-              </button>
-              <button
-                onClick={() => window.print()}
-                className="rounded-lg bg-accent px-3.5 py-2 text-xs font-semibold text-white"
-              >
-                Descargar PDF
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
     </main>
   );
 }

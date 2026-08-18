@@ -61,3 +61,16 @@ body {
   color: var(--ink);
   font-family: var(--font-sans);
 }
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  body {
+    background: #fff !important;
+  }
+}
+
+@page {
+  margin: 1.6cm;
+}

@@ -152,3 +152,25 @@ insert into minutos_periodo (interprete_id, periodo, plataforma, minutos, tarifa
 ((select id from interpretes where nombre = 'Carlos Vinck Ascencio'), '2026-07-01', 'Propio', 1293, 0.1),
 ((select id from interpretes where nombre = 'Fernanda Andrade Me'), '2026-07-01', 'Propio', 2999, 0.1),
 ((select id from interpretes where nombre = 'Maria del Carmen Peredo Flores'), '2026-07-01', 'LB', 4, 0.1);
+-- Oscar Prunonosa: tarifa confirmada a $0.10
+insert into minutos_periodo (interprete_id, periodo, plataforma, minutos, tarifa) values
+((select id from interpretes where nombre = 'OSCAR EDUARDO PRUNONOSA SANTANA'), '2026-07-01', 'Propio', 361, 0.10);
+
+-- Continuidad de numeracion de recibos (los que ya se ubicaron a partir de archivos de junio;
+-- el resto de proveedores/interpretes queda en 0 = arranca en el #1, incluyendo a los 4
+-- nuevos -- Lila Ugarte, Jacob Condori, Carlos Vinck, Fernanda Andrade -- que son numero 1)
+update proveedores set ultimo_recibo = 760 where nombre = 'Maria Isabel Graciano Gaxiola';
+update proveedores set ultimo_recibo = 96 where nombre = 'Ericka Marleny Molina Mejia';
+update proveedores set ultimo_recibo = 9 where nombre = 'Rigoberto Alexander Chabrol Bryant';
+update proveedores set ultimo_recibo = 191 where nombre = 'Douglas Martin Cano Bucardo';
+update proveedores set ultimo_recibo = 6027 where nombre = 'Earny Alejandro Atily Stubb';
+
+update interpretes set ultimo_recibo = 193 where nombre = 'Alba Lucia Arostegui Rizo';
+update interpretes set ultimo_recibo = 14 where nombre = 'Jose Mauricio Rubio Arabelo';
+update interpretes set ultimo_recibo = 7 where nombre = 'Julio Rodrigo Chanchavac Gutierrez';
+update interpretes set ultimo_recibo = 12 where nombre = 'emanuel orellana';
+update interpretes set ultimo_recibo = 222 where nombre = 'Martha Garcia Hernandez';
+update interpretes set ultimo_recibo = 22 where nombre = 'Jeyce Ines Fredericks';
+update interpretes set ultimo_recibo = 10 where nombre = 'Kebyn Steve Guevara Umaña';
+update interpretes set ultimo_recibo = 424 where nombre = 'Eddy Anthony Bendliss Castillo';
+update interpretes set ultimo_recibo = 16 where nombre = 'Silvia Guillen Santos';

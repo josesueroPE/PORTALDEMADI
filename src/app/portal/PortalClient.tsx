@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { generarRecibo, logout } from "./actions";
 import { PLAT_LABEL, periodoLabel, money } from "@/lib/recibo-utils";
+import DatosPagoForm from "./DatosPagoForm";
 
 type Linea = { plataforma: string; minutos: number; tarifa: number };
 type ReciboHist = { id: string; numero: number; periodo: string; total: number; fecha: string };
@@ -16,7 +17,15 @@ export default function PortalClient({
   yaGenerado,
   reciboIdDelPeriodo,
 }: {
-  interprete: { id: string; nombre: string; pais: string | null; genera_recibo_propio: boolean; ultimo_recibo: number };
+  interprete: {
+    id: string;
+    nombre: string;
+    pais: string | null;
+    genera_recibo_propio: boolean;
+    ultimo_recibo: number;
+    metodo_pago: string | null;
+    datos_pago: string | null;
+  };
   periodo: string | null;
   lineas: Linea[];
   historial: ReciboHist[];
@@ -120,6 +129,8 @@ export default function PortalClient({
                   )}
                 </>
               )}
+
+              <DatosPagoForm metodoActual={interprete.metodo_pago} datosActuales={interprete.datos_pago} />
 
               <h2 className="mt-8 mb-3 font-serif text-base font-bold text-ink">Historial de recibos</h2>
               <div className="flex flex-col gap-2">

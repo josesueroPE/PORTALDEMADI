@@ -17,7 +17,7 @@ export default async function ReciboPage({ params }: { params: Promise<{ id: str
 
   const { data: interprete } = await supabase
     .from("interpretes")
-    .select("nombre, pais")
+    .select("nombre, pais, metodo_pago, datos_pago")
     .eq("id", recibo.interprete_id)
     .maybeSingle();
 
@@ -89,6 +89,13 @@ export default async function ReciboPage({ params }: { params: Promise<{ id: str
           <p className="font-mono text-lg font-bold">TOTAL: {money(Number(recibo.total))}</p>
         </div>
         <p className="mt-1 text-right text-sm italic text-gray-600">{numeroALetras(Number(recibo.total))}.</p>
+
+        {interprete.datos_pago && (
+          <p className="mt-6 border-t border-dashed border-gray-300 pt-4 text-sm text-gray-700">
+            <strong>Nota:</strong> Por favor sírvanse depositar el importe de mis honorarios a mi cuenta de{" "}
+            {interprete.metodo_pago}: <span className="font-mono">{interprete.datos_pago}</span>
+          </p>
+        )}
 
         <div className="mt-12 flex items-end justify-between text-sm text-gray-500">
           <p>{interprete.pais ?? ""}, {recibo.fecha}</p>

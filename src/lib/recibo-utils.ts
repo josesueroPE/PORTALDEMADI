@@ -16,6 +16,14 @@ export function periodoLabel(periodoISO: string) {
   return `${mes.charAt(0).toUpperCase()}${mes.slice(1)} ${y}`;
 }
 
+// Fecha de emisión del recibo = último día del mes trabajado (no el día que se genera),
+// para que contabilidad lo cuente dentro del mes correcto.
+export function ultimoDiaDelPeriodo(periodoISO: string) {
+  const [y, m] = periodoISO.split("-").map(Number);
+  const ultimo = new Date(Date.UTC(y, m, 0));
+  return ultimo.toISOString().slice(0, 10);
+}
+
 export function money(n: number) {
   return `$${n.toFixed(2)}`;
 }

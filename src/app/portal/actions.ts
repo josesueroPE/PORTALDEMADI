@@ -23,6 +23,24 @@ export async function actualizarDatosPago(_prevState: string | null, formData: F
   return "ok";
 }
 
+export async function actualizarDatosPersonales(_prevState: string | null, formData: FormData) {
+  const direccion = String(formData.get("direccion") || "").trim();
+  const telefono = String(formData.get("telefono") || "").trim();
+
+  if (!direccion) return "Escribe tu dirección.";
+
+  const supabase = await createClient();
+  const { error } = await supabase.rpc("actualizar_mis_datos_personales", {
+    p_direccion: direccion,
+    p_telefono: telefono || null,
+  });
+
+  if (error) return "No se pudo guardar. Intenta de nuevo.";
+
+  revalidatePath("/portal");
+  return "ok";
+}
+
 export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();

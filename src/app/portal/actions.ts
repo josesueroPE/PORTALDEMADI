@@ -26,6 +26,7 @@ export async function actualizarDatosPago(_prevState: string | null, formData: F
 export async function actualizarDatosPersonales(_prevState: string | null, formData: FormData) {
   const direccion = String(formData.get("direccion") || "").trim();
   const telefono = String(formData.get("telefono") || "").trim();
+  const cedula = String(formData.get("cedula") || "").trim();
 
   if (!direccion) return "Escribe tu dirección.";
 
@@ -33,6 +34,7 @@ export async function actualizarDatosPersonales(_prevState: string | null, formD
   const { error } = await supabase.rpc("actualizar_mis_datos_personales", {
     p_direccion: direccion,
     p_telefono: telefono || null,
+    p_cedula: cedula || null,
   });
 
   if (error) return "No se pudo guardar. Intenta de nuevo.";

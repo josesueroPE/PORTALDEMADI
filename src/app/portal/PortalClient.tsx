@@ -28,6 +28,7 @@ export default function PortalClient({
     datos_pago: string | null;
     direccion: string | null;
     telefono: string | null;
+    cedula: string | null;
   };
   periodo: string | null;
   lineas: Linea[];
@@ -133,7 +134,11 @@ export default function PortalClient({
                 </>
               )}
 
-              <DatosPersonalesForm direccionActual={interprete.direccion} telefonoActual={interprete.telefono} />
+              <DatosPersonalesForm
+                direccionActual={interprete.direccion}
+                telefonoActual={interprete.telefono}
+                cedulaActual={interprete.cedula}
+              />
               <DatosPagoForm metodoActual={interprete.metodo_pago} datosActuales={interprete.datos_pago} />
 
               <h2 className="mt-8 mb-3 font-serif text-base font-bold text-ink">Historial de recibos</h2>

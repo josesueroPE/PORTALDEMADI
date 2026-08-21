@@ -17,7 +17,7 @@ export default async function ReciboPage({ params }: { params: Promise<{ id: str
 
   const { data: interprete } = await supabase
     .from("interpretes")
-    .select("nombre, pais, email, direccion, telefono, metodo_pago, datos_pago")
+    .select("nombre, pais, email, direccion, telefono, cedula, metodo_pago, datos_pago")
     .eq("id", recibo.interprete_id)
     .maybeSingle();
 
@@ -48,6 +48,7 @@ export default async function ReciboPage({ params }: { params: Promise<{ id: str
         <div className="mb-6">
           <p className="text-sm text-gray-500">Emitido por</p>
           <p className="text-base font-semibold">{interprete.nombre}</p>
+          {interprete.cedula && <p className="text-sm text-gray-600">Cédula: {interprete.cedula}</p>}
           {interprete.direccion && <p className="text-sm text-gray-600">{interprete.direccion}</p>}
           <p className="text-sm text-gray-600">
             {[interprete.pais, interprete.telefono].filter(Boolean).join(" · ")}

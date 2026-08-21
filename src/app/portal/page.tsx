@@ -19,7 +19,9 @@ export default async function PortalPage() {
 
   const { data: interprete } = await supabase
     .from("interpretes")
-    .select("id, nombre, pais, genera_recibo_propio, ultimo_recibo, metodo_pago, datos_pago, direccion, telefono")
+    .select(
+      "id, nombre, pais, genera_recibo_propio, ultimo_recibo, metodo_pago, datos_pago, direccion, telefono, cedula"
+    )
     .eq("user_id", user.id)
     .maybeSingle();
 

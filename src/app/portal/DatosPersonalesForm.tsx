@@ -6,9 +6,11 @@ import { actualizarDatosPersonales } from "./actions";
 export default function DatosPersonalesForm({
   direccionActual,
   telefonoActual,
+  cedulaActual,
 }: {
   direccionActual: string | null;
   telefonoActual: string | null;
+  cedulaActual: string | null;
 }) {
   const [result, formAction, pending] = useActionState(actualizarDatosPersonales, null);
   const [editando, setEditando] = useState(!direccionActual);
@@ -25,7 +27,8 @@ export default function DatosPersonalesForm({
             <p className="text-[11px] font-semibold uppercase tracking-wide text-ink-faint">
               Mis datos para el recibo
             </p>
-            <p className="mt-1 text-[13px] text-ink">{direccionActual}</p>
+            {cedulaActual && <p className="mt-1 text-[13px] text-ink">Cédula: {cedulaActual}</p>}
+            <p className="text-[13px] text-ink">{direccionActual}</p>
             {telefonoActual && <p className="text-[13px] text-ink-soft">{telefonoActual}</p>}
           </div>
           <button
@@ -42,9 +45,15 @@ export default function DatosPersonalesForm({
   return (
     <form action={formAction} className="mt-4 rounded-lg border border-border bg-surface-2 px-4 py-4">
       <p className="mb-3 text-[11px] font-semibold uppercase tracking-wide text-ink-faint">
-        Mis datos para el recibo — dirección y teléfono
+        Mis datos para el recibo — cédula, dirección y teléfono
       </p>
       <div className="flex flex-col gap-2.5">
+        <input
+          name="cedula"
+          defaultValue={cedulaActual ?? ""}
+          placeholder="Cédula / N° de identidad"
+          className="rounded-lg border border-border bg-surface px-3 py-2 text-sm text-ink"
+        />
         <input
           name="direccion"
           defaultValue={direccionActual ?? ""}

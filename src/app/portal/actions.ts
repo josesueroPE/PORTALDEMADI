@@ -112,7 +112,7 @@ export async function generarRecibo(periodo: string) {
   }));
 
   await supabase.from("recibo_lineas").insert(lineas);
-  await supabase.from("interpretes").update({ ultimo_recibo: numero }).eq("id", interprete.id);
+  await supabase.rpc("actualizar_mi_ultimo_recibo", { p_numero: numero });
 
   revalidatePath("/portal");
   return recibo.id as string;

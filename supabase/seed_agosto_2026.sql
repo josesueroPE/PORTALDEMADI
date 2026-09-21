@@ -74,7 +74,7 @@ insert into minutos_periodo (interprete_id, periodo, plataforma, minutos, tarifa
 ((select id from interpretes where nombre = 'Marlon Pineer'), '2026-08-01', 'TTG', 249, 0.1),
 ((select id from interpretes where nombre = 'Marlon Pineer'), '2026-08-01', 'Propio', 5602, 0.1),
 ((select id from interpretes where nombre = 'Marlyn Bryant'), '2026-08-01', 'Propio', 2279, 0.1),
-((select id from interpretes where nombre = 'Martha Garcia Hernandez'), '2026-08-01', 'Propio', 4445, 0.1),
+((select id from interpretes where nombre = 'Martha Mariana Garcia Hernandez'), '2026-08-01', 'Propio', 4445, 0.1),
 ((select id from interpretes where nombre = 'Martin Ernesto Ricardo Aranibar Estenssoro'), '2026-08-01', 'TTG', 1341, 0.12),
 ((select id from interpretes where nombre = 'Nicole Francesca Houghton Lazo'), '2026-08-01', 'Propio', 3985, 0.1),
 ((select id from interpretes where nombre = 'Nilda Jennifer Amesquita Perez Leon'), '2026-08-01', 'LB', 1316, 0.1),

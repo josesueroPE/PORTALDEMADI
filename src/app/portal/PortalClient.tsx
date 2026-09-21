@@ -13,10 +13,9 @@ type ReciboHist = { id: string; numero: number; periodo: string; total: number; 
 export default function PortalClient({
   interprete,
   periodo,
+  alDia,
   lineas,
   historial,
-  yaGenerado,
-  reciboIdDelPeriodo,
 }: {
   interprete: {
     id: string;
@@ -31,10 +30,9 @@ export default function PortalClient({
     cedula: string | null;
   };
   periodo: string | null;
+  alDia: boolean;
   lineas: Linea[];
   historial: ReciboHist[];
-  yaGenerado: boolean;
-  reciboIdDelPeriodo: string | null;
 }) {
   const router = useRouter();
   const [pending, startTransition] = useTransition();
@@ -54,6 +52,38 @@ export default function PortalClient({
       }
     });
   }
+
+  const perfilYHistorial = (
+    <>
+      <DatosPersonalesForm
+        direccionActual={interprete.direccion}
+        telefonoActual={interprete.telefono}
+        cedulaActual={interprete.cedula}
+      />
+      <DatosPagoForm metodoActual={interprete.metodo_pago} datosActuales={interprete.datos_pago} />
+
+      <h2 className="mt-8 mb-3 font-serif text-base font-bold text-ink">Historial de recibos</h2>
+      <div className="flex flex-col gap-2">
+        {historial.length === 0 && <p className="text-[13px] text-ink-faint">Todavía no tienes recibos.</p>}
+        {historial.map((h) => (
+          <a
+            key={h.id}
+            href={`/portal/recibo/${h.id}`}
+            target="_blank"
+            className="flex items-center justify-between rounded-lg border border-border bg-surface px-3.5 py-3 hover:bg-surface-2"
+          >
+            <div>
+              <p className="text-[13px] font-semibold text-ink">
+                Recibo N° {h.numero} · {periodoLabel(h.periodo)}
+              </p>
+              <p className="font-mono text-[11.5px] text-ink-faint">{h.fecha}</p>
+            </div>
+            <p className="font-mono text-[13.5px] font-bold text-ink">{money(h.total)}</p>
+          </a>
+        ))}
+      </div>
+    </>
+  );
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-bg px-4 py-10">
@@ -76,9 +106,23 @@ export default function PortalClient({
         </div>
 
         <div className="px-7 py-6">
-          {!periodo ? (
+          {!periodo && !alDia && (
             <p className="text-sm text-ink-soft">Todavía no hay minutos publicados para ti.</p>
-          ) : (
+          )}
+
+          {!periodo && alDia && (
+            <>
+              <div className="mb-6 flex items-start gap-2.5 rounded-lg border border-accent bg-accent-light px-4 py-3.5">
+                <span className="text-base text-accent-text">✓</span>
+                <p className="text-[13px] font-medium text-accent-text">
+                  Estás al día — ya generaste el recibo de todos tus periodos publicados.
+                </p>
+              </div>
+              {perfilYHistorial}
+            </>
+          )}
+
+          {periodo && (
             <>
               <div className="mb-6 flex items-start gap-2.5 rounded-lg border border-accent bg-accent-light px-4 py-3.5">
                 <span className="text-base text-accent-text">✓</span>
@@ -114,53 +158,17 @@ export default function PortalClient({
               {interprete.genera_recibo_propio && (
                 <>
                   {errorMsg && <p className="mt-3 text-[13px] text-danger">{errorMsg}</p>}
-                  {yaGenerado && reciboIdDelPeriodo ? (
-                    <a
-                      href={`/portal/recibo/${reciboIdDelPeriodo}`}
-                      target="_blank"
-                      className="mt-4 block w-full rounded-lg bg-accent py-3 text-center text-sm font-semibold text-white"
-                    >
-                      Ver / descargar recibo
-                    </a>
-                  ) : (
-                    <button
-                      onClick={onGenerar}
-                      disabled={pending}
-                      className="mt-4 w-full rounded-lg bg-accent py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-50"
-                    >
-                      {pending ? "Generando…" : `Generar mi recibo N° ${interprete.ultimo_recibo + 1}`}
-                    </button>
-                  )}
+                  <button
+                    onClick={onGenerar}
+                    disabled={pending}
+                    className="mt-4 w-full rounded-lg bg-accent py-3 text-sm font-semibold text-white transition-opacity disabled:opacity-50"
+                  >
+                    {pending ? "Generando…" : `Generar mi recibo N° ${interprete.ultimo_recibo + 1}`}
+                  </button>
                 </>
               )}
 
-              <DatosPersonalesForm
-                direccionActual={interprete.direccion}
-                telefonoActual={interprete.telefono}
-                cedulaActual={interprete.cedula}
-              />
-              <DatosPagoForm metodoActual={interprete.metodo_pago} datosActuales={interprete.datos_pago} />
-
-              <h2 className="mt-8 mb-3 font-serif text-base font-bold text-ink">Historial de recibos</h2>
-              <div className="flex flex-col gap-2">
-                {historial.length === 0 && <p className="text-[13px] text-ink-faint">Todavía no tienes recibos.</p>}
-                {historial.map((h) => (
-                  <a
-                    key={h.id}
-                    href={`/portal/recibo/${h.id}`}
-                    target="_blank"
-                    className="flex items-center justify-between rounded-lg border border-border bg-surface px-3.5 py-3 hover:bg-surface-2"
-                  >
-                    <div>
-                      <p className="text-[13px] font-semibold text-ink">
-                        Recibo N° {h.numero} · {periodoLabel(h.periodo)}
-                      </p>
-                      <p className="font-mono text-[11.5px] text-ink-faint">{h.fecha}</p>
-                    </div>
-                    <p className="font-mono text-[13.5px] font-bold text-ink">{money(h.total)}</p>
-                  </a>
-                ))}
-              </div>
+              {perfilYHistorial}
             </>
           )}
         </div>

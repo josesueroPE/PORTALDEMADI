@@ -40,15 +40,26 @@ export default async function PortalPage() {
     );
   }
 
-  const { data: ultimoPeriodo } = await supabase
+  const { data: todosPeriodos } = await supabase
     .from("minutos_periodo")
     .select("periodo")
     .eq("interprete_id", interprete.id)
-    .order("periodo", { ascending: false })
-    .limit(1)
-    .maybeSingle();
+    .order("periodo", { ascending: true });
 
-  const periodo = ultimoPeriodo?.periodo ?? null;
+  const { data: historial } = await supabase
+    .from("recibos")
+    .select("id, numero, periodo, total, fecha")
+    .eq("interprete_id", interprete.id)
+    .order("numero", { ascending: false });
+
+  const periodosConMinutos = Array.from(new Set((todosPeriodos ?? []).map((p) => p.periodo)));
+  const periodosFacturados = new Set((historial ?? []).map((h) => h.periodo));
+  const periodosPendientes = periodosConMinutos.filter((p) => !periodosFacturados.has(p));
+
+  // Siempre el mas antiguo pendiente primero, para que nadie se salte un mes
+  // aunque su cuenta se haya creado despues de que ya cargamos un mes mas nuevo.
+  const periodo = periodosPendientes[0] ?? null;
+  const alDia = periodo === null && periodosConMinutos.length > 0;
 
   const { data: minutos } = periodo
     ? await supabase
@@ -58,23 +69,13 @@ export default async function PortalPage() {
         .eq("periodo", periodo)
     : { data: [] };
 
-  const { data: historial } = await supabase
-    .from("recibos")
-    .select("id, numero, periodo, total, fecha")
-    .eq("interprete_id", interprete.id)
-    .order("numero", { ascending: false });
-
-  const yaGenerado = (historial ?? []).some((h) => h.periodo === periodo);
-  const reciboDelPeriodo = (historial ?? []).find((h) => h.periodo === periodo);
-
   return (
     <PortalClient
       interprete={interprete}
       periodo={periodo}
+      alDia={alDia}
       lineas={(minutos ?? []).map((l) => ({ ...l, tarifa: Number(l.tarifa) }))}
       historial={(historial ?? []).map((h) => ({ ...h, total: Number(h.total) }))}
-      yaGenerado={yaGenerado}
-      reciboIdDelPeriodo={reciboDelPeriodo?.id ?? null}
     />
   );
 }

@@ -59,7 +59,7 @@ export async function generarRecibo(periodo: string) {
 
   const { data: interprete, error: interpreteError } = await supabase
     .from("interpretes")
-    .select("id, ultimo_recibo, genera_recibo_propio")
+    .select("id, genera_recibo_propio")
     .eq("user_id", user.id)
     .single();
 
@@ -86,7 +86,8 @@ export async function generarRecibo(periodo: string) {
   if (minutosError || !minutos || minutos.length === 0) throw new Error("No hay minutos para este periodo");
 
   const total = minutos.reduce((s, l) => s + l.minutos * Number(l.tarifa), 0);
-  const numero = interprete.ultimo_recibo + 1;
+  const { data: numero, error: numeroError } = await supabase.rpc("reservar_mi_numero_recibo");
+  if (numeroError || numero == null) throw new Error("No se pudo asignar el número de recibo");
 
   const { data: recibo, error: reciboError } = await supabase
     .from("recibos")
@@ -112,7 +113,6 @@ export async function generarRecibo(periodo: string) {
   }));
 
   await supabase.from("recibo_lineas").insert(lineas);
-  await supabase.rpc("actualizar_mi_ultimo_recibo", { p_numero: numero });
 
   revalidatePath("/portal");
   return recibo.id as string;

@@ -1,3 +1,6 @@
+-- Correcciones confirmadas
+update interpretes set pais = 'Argentina' where nombre = 'Julieta Carrasco';
+
 -- Intérpretes nuevos de septiembre (todos equipo MADI, directos)
 insert into interpretes (nombre, email, pais, proveedor_id, estado, metodo_pago, genera_recibo_propio) values
 ('Alfredo Calvimontes Ayala', NULL, 'Bolivia', NULL, 'Onboarding', 'Payoneer', true),
@@ -5,7 +8,7 @@ insert into interpretes (nombre, email, pais, proveedor_id, estado, metodo_pago,
 ('Francisco Antonio Orellana García', 'drfcorellana@gmail.com', 'Honduras', NULL, 'Onboarding', 'Transferencia bancaria', true);
 
 -- Minutos de Septiembre 2026 (pago 2026-10-23)
--- Valentina Alcoreza: Propio a $0.11, Maven/TTG a $0.12 (segun la formula de la planilla)
+-- Valentina Alcoreza: Propio a $0.11, Maven/TTG a $0.12 (contrato tipo Jacob, confirmado)
 insert into minutos_periodo (interprete_id, periodo, plataforma, minutos, tarifa) values
 ((select id from interpretes where nombre = 'Alba Lucia Arostegui Rizo'), '2026-09-01', 'LB', 2805, 0.1),
 ((select id from interpretes where nombre = 'Alba Lucia Arostegui Rizo'), '2026-09-01', 'Propio', 3072, 0.1),

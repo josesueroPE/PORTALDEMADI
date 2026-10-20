@@ -55,7 +55,7 @@ insert into minutos_periodo (interprete_id, periodo, plataforma, minutos, tarifa
 ((select id from interpretes where nombre = 'Kebyn Steve Guevara Umaña'), '2026-09-01', 'Propio', 744, 0.1),
 ((select id from interpretes where nombre = 'Kevin Esli Marroquin Cos'), '2026-09-01', 'Propio', 8315, 0.11),
 ((select id from interpretes where nombre = 'Leisha Dixon'), '2026-09-01', 'Propio', 4034, 0.1),
-((select id from interpretes where nombre = 'Lila Lucina Ugarte Melgar'), '2026-09-01', 'Propio', 7199, 0.1),
+((select id from interpretes where nombre = 'Lila Lucina Ugarte Melgar'), '2026-09-01', 'Propio', 7199, 0.11),
 ((select id from interpretes where nombre = 'Lituanya Ivette Saldivar Clair'), '2026-09-01', 'Propio', 326, 0.1),
 ((select id from interpretes where nombre = 'Luis Otero Gomez'), '2026-09-01', 'LB', 2346, 0.1),
 ((select id from interpretes where nombre = 'Marcelo Trigo Flores'), '2026-09-01', 'Propio', 7524, 0.12),
